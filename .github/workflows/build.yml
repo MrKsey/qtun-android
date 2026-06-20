@@ -26,14 +26,15 @@ jobs:
       with:
         target: armv7-linux-androideabi,aarch64-linux-android
 
-    - name: Set up Android SDK
-      uses: android-actions/setup-android@v3
-      with:
-        cmdline-tools-version: 11.0
-
-    - name: Install NDK and build tools
+    - name: Enable KVM group perms
       run: |
-        sdkmanager --install "ndk;27.2.12479018" "build-tools;35.0.0" "platforms;android-35"
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
+
+    - name: Install NDK
+      run: |
+        sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;27.2.12479018"
         echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.2.12479018" >> $GITHUB_ENV
 
     - name: Make gradlew executable
