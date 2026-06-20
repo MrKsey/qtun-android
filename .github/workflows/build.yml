@@ -32,16 +32,21 @@ jobs:
       run: |
         cat >> app/build.gradle.kts << 'EOF'
 
-        android.signingConfigs {
-            create("release") {
-                storeFile = file("/home/runner/.android/debug.keystore")
-                storePassword = "android"
-                keyAlias = "androiddebugkey"
-                keyPassword = "android"
+        android {
+            signingConfigs {
+                create("release") {
+                    storeFile = file("/home/runner/.android/debug.keystore")
+                    storePassword = "android"
+                    keyAlias = "androiddebugkey"
+                    keyPassword = "android"
+                }
+            }
+            buildTypes {
+                getByName("release") {
+                    signingConfig = signingConfigs.getByName("release")
+                }
             }
         }
-
-        android.buildTypes.release.signingConfig = android.signingConfigs.getByName("release")
         EOF
 
     - name: Set up JDK 17
