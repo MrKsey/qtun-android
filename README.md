@@ -38,13 +38,16 @@ qtun acts as a bridge between Shadowsocks and QUIC protocol:
 
 #### Client-side Parameters (for Shadowsocks Android)
 
-| Parameter | Environment Variable | Description | Example |
-|-----------|---------------------|-------------|---------|
-| `host` | `QTUN_HOST` | Server hostname/IP | `example.com` |
-| `port` | `QTUN_PORT` | Server QUIC port | `443` |
-| `sni` | `QTUN_SNI` | Server Name Indication (TLS) | `example.com` |
-| `alpn` | `QTUN_ALPN` | Application-Layer Protocol Negotiation | `h3` |
-| `obfs` | `QTUN_OBFS` | Obfuscation password | `mysecret` |
+The Android plugin has a simple interface with one configurable parameter:
+
+| Parameter | UI Field | Description | Example |
+|-----------|----------|-------------|---------|
+| `host` | Hostname | Server hostname for TLS verification | `example.com` |
+
+**Note:** Other parameters use default values:
+- `port`: 443 (standard HTTPS port)
+- `sni`: Same as host
+- `alpn`: h3 (HTTP/3)
 
 #### Server-side Parameters (qtun-server)
 
@@ -61,6 +64,13 @@ qtun acts as a bridge between Shadowsocks and QUIC protocol:
 
 #### Shadowsocks Android Plugin Configuration
 
+In the qtun plugin settings, enter only the hostname:
+
+```
+Hostname: example.com
+```
+
+Full Shadowsocks profile:
 ```json
 {
   "server": "example.com",
@@ -68,7 +78,7 @@ qtun acts as a bridge between Shadowsocks and QUIC protocol:
   "password": "your_password",
   "method": "chacha20-ietf-poly1305",
   "plugin": "com.github.shadowsocks.plugin.qtun/.QtunPlugin",
-  "plugin_opts": "host=example.com;port=443;sni=example.com;alpn=h3"
+  "plugin_opts": "host=example.com"
 }
 ```
 
@@ -125,10 +135,7 @@ APK files are automatically built and published as releases:
 1. Install [Shadowsocks Android](https://github.com/shadowsocks/shadowsocks-android)
 2. Install qtun-android plugin
 3. Create new profile with your server details
-4. In plugin options, add:
-   ```
-   host=your-server.com;port=443;sni=your-server.com;alpn=h3
-   ```
+4. In plugin settings, enter **Hostname** of your server (e.g., `example.com`)
 5. Connect and enjoy secure browsing!
 
 ### Troubleshooting
@@ -176,13 +183,16 @@ qtun выступает в качестве моста между Shadowsocks и
 
 #### Параметры клиента (для Shadowsocks Android)
 
-| Параметр | Переменная окружения | Описание | Пример |
-|----------|---------------------|----------|---------|
-| `host` | `QTUN_HOST` | Хост/IP сервера | `example.com` |
-| `port` | `QTUN_PORT` | Порт QUIC сервера | `443` |
-| `sni` | `QTUN_SNI` | Server Name Indication (TLS) | `example.com` |
-| `alpn` | `QTUN_ALPN` | Согласование протокола прикладного уровня | `h3` |
-| `obfs` | `QTUN_OBFS` | Пароль обфускации | `mysecret` |
+Плагин Android имеет простой интерфейс с одним настраиваемым параметром:
+
+| Параметр | Поле в UI | Описание | Пример |
+|----------|----------|----------|---------|
+| `host` | Hostname | Хост сервера для TLS проверки | `example.com` |
+
+**Примечание:** Остальные параметры используют значения по умолчанию:
+- `port`: 443 (стандартный HTTPS порт)
+- `sni`: То же что и host
+- `alpn`: h3 (HTTP/3)
 
 #### Параметры сервера (qtun-server)
 
@@ -199,6 +209,13 @@ qtun выступает в качестве моста между Shadowsocks и
 
 #### Конфигурация плагина для Shadowsocks Android
 
+В настройках плагина qtun введите только hostname:
+
+```
+Hostname: example.com
+```
+
+Полный профиль Shadowsocks:
 ```json
 {
   "server": "example.com",
@@ -206,7 +223,7 @@ qtun выступает в качестве моста между Shadowsocks и
   "password": "your_password",
   "method": "chacha20-ietf-poly1305",
   "plugin": "com.github.shadowsocks.plugin.qtun/.QtunPlugin",
-  "plugin_opts": "host=example.com;port=443;sni=example.com;alpn=h3"
+  "plugin_opts": "host=example.com"
 }
 ```
 
@@ -263,10 +280,7 @@ APK файлы автоматически собираются и публику
 1. Установите [Shadowsocks Android](https://github.com/shadowsocks/shadowsocks-android)
 2. Установите плагин qtun-android
 3. Создайте новый профиль с данными вашего сервера
-4. В параметрах плагина добавьте:
-   ```
-   host=your-server.com;port=443;sni=your-server.com;alpn=h3
-   ```
+4. В параметрах плагина введите **Hostname** вашего сервера (например, `example.com`)
 5. Подключайтесь и наслаждайтесь безопасным просмотром!
 
 ### Решение проблем
