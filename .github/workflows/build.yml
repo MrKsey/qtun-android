@@ -30,7 +30,7 @@ jobs:
     - name: Install Rust
       uses: actions-rust-lang/setup-rust-toolchain@v1
       with:
-        target: armv7-linux-androideabi,aarch64-linux-android,i686-linux-android,x86_64-linux-android
+        target: armv7-linux-androideabi,aarch64-linux-android
 
     - name: Enable KVM group perms
       run: |
@@ -46,8 +46,8 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x gradlew
 
-    - name: Build Debug APK
-      run: ./gradlew assembleDebug --stacktrace
+    - name: Build Debug APK (ARM only)
+      run: ./gradlew assembleDebug --stacktrace -PabiFilters=armeabi-v7a,arm64-v8a
 
     - name: Upload ARM APK
       uses: actions/upload-artifact@v4
