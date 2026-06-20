@@ -28,6 +28,22 @@ jobs:
         sed -i 's/targets = listOf("arm", "arm64", "x86", "x86_64")/targets = listOf("arm", "arm64")/' app/build.gradle.kts
         sed -i 's/isUniversalApk = true/isUniversalApk = true\n            include("armeabi-v7a", "arm64-v8a")/' app/build.gradle.kts
 
+    - name: Configure signing for release
+      run: |
+        cat >> app/build.gradle.kts << 'EOF'
+
+        android.signingConfigs {
+            create("release") {
+                storeFile = file("/home/runner/.android/debug.keystore")
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
+            }
+        }
+
+        android.buildTypes.release.signingConfig = android.signingConfigs.getByName("release")
+        EOF
+
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
@@ -47,8 +63,12 @@ jobs:
 
     - name: Fix Android config directory permissions
       run: |
-        mkdir -p /home/runner/.config/.android
-        chmod 777 /home/runner/.config/.android
+        mkdir -p /home/runner/.android
+        chmod 777 /home/runner/.android
+
+    - name: Generate Debug Keystore
+      run: |
+        keytool -genkey -v -keystore /home/runner/.android/debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
 
     - name: Install NDK
       run: |
@@ -58,28 +78,28 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x gradlew
 
-    - name: Build Debug APK (ARM only)
-      run: ./gradlew assembleDebug --stacktrace -PabiFilters=armeabi-v7a,arm64-v8a
+    - name: Build Release APK (ARM only)
+      run: ./gradlew assembleRelease --stacktrace -PabiFilters=armeabi-v7a,arm64-v8a
 
     - name: Upload ARM APK
       uses: actions/upload-artifact@v4
       with:
-        name: qtun-android-arm-debug
-        path: app/build/outputs/apk/debug/app-armeabi-v7a-debug.apk
+        name: qtun-android-arm-release
+        path: app/build/outputs/apk/release/app-armeabi-v7a-release.apk
         if-no-files-found: warn
 
     - name: Upload ARM64 APK
       uses: actions/upload-artifact@v4
       with:
-        name: qtun-android-arm64-debug
-        path: app/build/outputs/apk/debug/app-arm64-v8a-debug.apk
+        name: qtun-android-arm64-release
+        path: app/build/outputs/apk/release/app-arm64-v8a-release.apk
         if-no-files-found: warn
 
     - name: Upload Universal APK
       uses: actions/upload-artifact@v4
       with:
-        name: qtun-android-universal-debug
-        path: app/build/outputs/apk/debug/app-debug.apk
+        name: qtun-android-universal-release
+        path: app/build/outputs/apk/release/app-release.apk
         if-no-files-found: warn
 
   release:
@@ -91,19 +111,19 @@ jobs:
     - name: Download ARM APK
       uses: actions/download-artifact@v4
       with:
-        name: qtun-android-arm-debug
+        name: qtun-android-arm-release
         path: ./artifacts
 
     - name: Download ARM64 APK
       uses: actions/download-artifact@v4
       with:
-        name: qtun-android-arm64-debug
+        name: qtun-android-arm64-release
         path: ./artifacts
 
     - name: Download Universal APK
       uses: actions/download-artifact@v4
       with:
-        name: qtun-android-universal-debug
+        name: qtun-android-universal-release
         path: ./artifacts
 
     - name: Create Release
