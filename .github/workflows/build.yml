@@ -3,6 +3,8 @@ name: Build APK
 on:
   push:
     branches: [ main, master ]
+    tags:
+      - 'v*'
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
@@ -79,3 +81,35 @@ jobs:
         name: qtun-android-universal-debug
         path: app/build/outputs/apk/debug/app-debug.apk
         if-no-files-found: warn
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Download ARM APK
+      uses: actions/download-artifact@v4
+      with:
+        name: qtun-android-arm-debug
+        path: ./artifacts
+
+    - name: Download ARM64 APK
+      uses: actions/download-artifact@v4
+      with:
+        name: qtun-android-arm64-debug
+        path: ./artifacts
+
+    - name: Download Universal APK
+      uses: actions/download-artifact@v4
+      with:
+        name: qtun-android-universal-debug
+        path: ./artifacts
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: ./artifacts/*.apk
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
