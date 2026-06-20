@@ -43,6 +43,11 @@ jobs:
         sudo udevadm control --reload-rules
         sudo udevadm trigger --name-match=kvm
 
+    - name: Fix Android config directory permissions
+      run: |
+        mkdir -p /home/runner/.android
+        chmod 777 /home/runner/.android
+
     - name: Install NDK
       run: |
         sudo $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;27.2.12479018"
