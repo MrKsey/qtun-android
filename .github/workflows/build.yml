@@ -45,8 +45,8 @@ jobs:
 
     - name: Fix Android config directory permissions
       run: |
-        mkdir -p /home/runner/.android
-        chmod 777 /home/runner/.android
+        mkdir -p /home/runner/.config/.android
+        chmod 777 /home/runner/.config/.android
 
     - name: Install NDK
       run: |
